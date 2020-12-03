@@ -58,9 +58,7 @@ int nNewHeight;
 CClientUIInterface uiInterface;
 bool fConfChange;
 unsigned int nNodeLifespan;
-unsigned int nDerivationMethodIndex;
 unsigned int nMinerSleep;
-bool fUseFastIndex;
 bool fOnlyTor = false;
 
 

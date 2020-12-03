@@ -5,6 +5,10 @@
 #ifndef BITCOIN_MAIN_H
 #define BITCOIN_MAIN_H
 
+// Library headers
+#include <list>
+
+// Project headers
 #include "chain.h"
 #include "bignum.h"
 #include "sync.h"
@@ -18,7 +22,7 @@
 #include "genesis.h"
 #include "mining.h"
 
-#include <list>
+#include "main_structs.h"
 
 class CValidationState;
 class CBlock;
@@ -79,36 +83,6 @@ static const int64_t nDrift = 5 * 60;
 inline int64_t FutureDrift(int64_t nTime) { return nTime + nDrift; }
 /** "reject" message codes **/
 static const unsigned char REJECT_INVALID = 0x10;
-
-extern CScript COINBASE_FLAGS;
-extern CCriticalSection cs_main;
-extern CTxMemPool mempool;
-extern std::map<uint256, CBlockIndex*> mapBlockIndex;
-extern std::set<std::pair<COutPoint, unsigned int> > setStakeSeen;
-extern CBlockIndex* pindexGenesisBlock;
-extern unsigned int nNodeLifespan;
-extern int nBestHeight;
-extern uint256 nBestChainTrust;
-extern uint256 nBestInvalidTrust;
-extern uint256 hashBestChain;
-extern CBlockIndex* pindexBest;
-extern uint64_t nLastBlockTx;
-extern uint64_t nLastBlockSize;
-extern int64_t nLastCoinStakeSearchInterval;
-extern const std::string strMessageMagic;
-extern int64_t nTimeBestReceived;
-extern bool fImporting;
-extern bool fReindex;
-struct COrphanBlock;
-extern std::map<uint256, COrphanBlock*> mapOrphanBlocks;
-extern bool fHaveGUI;
-
-// Settings
-extern bool fUseFastIndex;
-extern unsigned int nDerivationMethodIndex;
-
-extern bool fLargeWorkForkFound;
-extern bool fLargeWorkInvalidChainFound;
 
 // Minimum disk space required - used in CheckDiskSpace()
 static const uint64_t nMinDiskSpace = 52428800;
@@ -439,7 +413,7 @@ public:
 };
 
 
-
+#include "global.h"
 
 /** wrapper for CTxOut that provides a more compact serialization */
 class CTxOutCompressor

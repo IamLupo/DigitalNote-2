@@ -3,8 +3,18 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "main.h"
+// Library headers
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+#include <boost/assign/list_of.hpp>
+#include <boost/bind.hpp>
 
+// Project headers
+#include "global.h"
 #include "addrman.h"
 #include "alert.h"
 #include "blocksizecalculator.h"
@@ -16,7 +26,6 @@
 #include "kernel.h"
 #include "net.h"
 #include "txdb.h"
-#include "txmempool.h"
 #include "ui_interface.h"
 #include "velocity.h"
 #include "instantx.h"
@@ -27,63 +36,21 @@
 #include "smessage.h"
 #include "util.h"
 
-#include <boost/algorithm/string/replace.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/bind.hpp>
+// Self header
+#include "main.h"
 
 using namespace std;
 using namespace boost;
 
-//
-// Global state
-//
-
+// Local Variables
+bool fAddrIndex = false;
 CCriticalSection cs_setpwalletRegistered;
 set<CWallet*> setpwalletRegistered;
-
-CCriticalSection cs_main;
-
-CTxMemPool mempool;
-
-map<uint256, CBlockIndex*> mapBlockIndex;
-set<pair<COutPoint, unsigned int> > setStakeSeen;
-
-CBlockIndex* pindexGenesisBlock = NULL;
-int nBestHeight = -1;
-uint256 nBestChainTrust = 0;
-uint256 nBestInvalidTrust = 0;
-uint256 hashBestChain = 0;
-CBlockIndex* pindexBest = NULL;
-int64_t nTimeBestReceived = 0;
-bool fImporting = false;
-bool fReindex = false;
-bool fAddrIndex = false;
-bool fHaveGUI = false;
-
-struct COrphanBlock {
-    uint256 hashBlock;
-    uint256 hashPrev;
-    std::pair<COutPoint, unsigned int> stake;
-    vector<unsigned char> vchBlock;
-};
-map<uint256, COrphanBlock*> mapOrphanBlocks;
 multimap<uint256, COrphanBlock*> mapOrphanBlocksByPrev;
 set<pair<COutPoint, unsigned int> > setStakeSeenOrphan;
-
+std::set<uint256> setValidatedTx;
 map<uint256, CTransaction> mapOrphanTransactions;
 map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
-
-// Constant stuff for coinbase transactions we create:
-CScript COINBASE_FLAGS;
-
-const string strMessageMagic = "DigitalNote Signed Message:\n";
-
-std::set<uint256> setValidatedTx;
 
 namespace {
 // Every received block is assigned a unique and increasing identifier, so we

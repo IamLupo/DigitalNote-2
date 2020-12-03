@@ -79,6 +79,7 @@ OBJS= \
     obj/keystore.o \
     obj/chain.o \
     obj/main.o \
+	obj/global.o \
     obj/net.o \
     obj/protocol.o \
     obj/rpcclient.o \
