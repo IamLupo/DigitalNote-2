@@ -17,8 +17,23 @@ CMessageHeader::CMessageHeader(const char* pszCommand, unsigned int nMessageSize
 {
     memcpy(pchMessageStart, Params().MessageStart(), MESSAGE_START_SIZE);
     memset(pchCommand, 0, sizeof(pchCommand));
+	
+	//
+	// Issue:
+	//		warning: ‘char* __builtin_strncpy(char*, const char*, long unsigned int)’
+	//		specified bound 12 equals destination size [-Wstringop-truncation]
+	//
+	//	Fix:
+	//		
+	//
+	//#pragma GCC diagnostic push
+	//#pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(pchCommand, pszCommand, COMMAND_SIZE);
-    nMessageSize = nMessageSizeIn;
+	pchCommand[COMMAND_SIZE] = '\0';
+	
+    //#pragma GCC diagnostic pop
+	
+	nMessageSize = nMessageSizeIn;
     nChecksum = 0;
 }
 

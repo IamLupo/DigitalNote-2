@@ -26,7 +26,7 @@ public:
 	};
 	
 	char pchMessageStart[MESSAGE_START_SIZE];
-	char pchCommand[COMMAND_SIZE];
+	char pchCommand[COMMAND_SIZE + 1];
 	unsigned int nMessageSize;
 	unsigned int nChecksum;
 	
